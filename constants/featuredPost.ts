@@ -1,0 +1,32 @@
+export const featuredPosts = [
+  {
+    id: 1,
+    title: "Getting Started with Next.js 14",
+    excerpt: "Learn the fundamentals of Next.js 14 and build modern web applications with the latest features.",
+    author: "John Doe",
+    date: "2024-01-15",
+    category: "Development",
+    readTime: "5 min read",
+    image: "/nextjs-development-coding.png",
+  },
+  {
+    id: 2,
+    title: "The Future of Web Design",
+    excerpt: "Exploring upcoming trends in web design and how they'll shape user experiences in 2024.",
+    author: "Jane Smith",
+    date: "2024-01-12",
+    category: "Design",
+    readTime: "8 min read",
+    image: "/web-design-modern-interface.png",
+  },
+  {
+    id: 3,
+    title: "Building Scalable APIs",
+    excerpt: "Best practices for creating robust and scalable API architectures that grow with your business.",
+    author: "Mike Johnson",
+    date: "2024-01-10",
+    category: "Backend",
+    readTime: "12 min read",
+    image: "/api-development-server-architecture.png",
+  },
+]
