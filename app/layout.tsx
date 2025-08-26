@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { Header } from "@/components/header"
 import { ThemeProvider } from "@/components/theme-provider"
-
+import { Footer } from "@/components/footer"
 
 export const metadata: Metadata = {
   title: "Chika - Modern Blogging Platform",
@@ -22,6 +22,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <Header />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

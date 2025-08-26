@@ -92,44 +92,55 @@ export default function Home() {
 						<div className="text-center mb-12">
 							<h2 className="text-6xl font-bold text-foreground mb-4">Latest Posts</h2>
 							<p className="text-lg text-muted-foreground">
-							Recent thoughts and discoveries from my journey
+								Recent thoughts and discoveries from my journey
 							</p>
 						</div>
-					</div>
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-						{featuredPosts.map((post) => (
-							<Card
-								key={post.id}
-								className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-								<div className="aspect-video overflow-hidden">
-									<img
-										src={post.image || '/placeholder.svg'}
-										alt={post.title}
-										className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-									/>
-								</div>
-								<CardHeader>
-									<div className="flex items-center justify-between mb-2">
-										<Badge variant="secondary">{post.category}</Badge>
-										<span className="text-sm text-muted-foreground">{post.readTime}</span>
+
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+							{featuredPosts.map((post) => (
+								<Card
+									key={post.id}
+									className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+									<div className="aspect-video overflow-hidden">
+										<img
+											src={post.image || '/placeholder.svg'}
+											alt={post.title}
+											className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+										/>
 									</div>
-									<CardTitle className="line-clamp-2 hover:text-accent transition-colors">
-										<Link href={`/blog/${post.id}`}>{post.title}</Link>
-									</CardTitle>
-									<CardDescription className="line-clamp-3">
-										{post.excerpt}
-									</CardDescription>
-								</CardHeader>
-								<CardContent>
-									<div className="flex items-center text-sm text-muted-foreground">
-										<User className="h-4 w-4 mr-1" />
-										<span className="mr-4">{post.author}</span>
-										<Calendar className="h-4 w-4 mr-1" />
-										<span>{new Date(post.date).toLocaleDateString()}</span>
-									</div>
-								</CardContent>
-							</Card>
-						))}
+									<CardHeader>
+										<div className="flex items-center justify-between mb-2">
+											<Badge variant="secondary">{post.category}</Badge>
+											<span className="text-sm text-muted-foreground">
+												{post.readTime}
+											</span>
+										</div>
+										<CardTitle className="line-clamp-2 hover:text-accent transition-colors">
+											<Link href={`/blog/${post.id}`}>{post.title}</Link>
+										</CardTitle>
+										<CardDescription className="line-clamp-3">
+											{post.excerpt}
+										</CardDescription>
+									</CardHeader>
+									<CardContent>
+										<div className="flex items-center text-sm text-muted-foreground">
+											<User className="h-4 w-4 mr-1" />
+											<span className="mr-4">{post.author}</span>
+											<Calendar className="h-4 w-4 mr-1" />
+											<span>{new Date(post.date).toLocaleDateString()}</span>
+										</div>
+									</CardContent>
+								</Card>
+							))}
+						</div>
+
+						<div className="text-center mt-12">
+							<Button variant="outline" size="lg">
+								<Link href="/blog" className="flex items-center justify-between gap-2">
+									View All Posts <ArrowRight className="ml-2 h-4 w-4" />
+								</Link>
+							</Button>
+						</div>
 					</div>
 				</section>
 			</main>
