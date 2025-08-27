@@ -29,14 +29,14 @@ export default function Home() {
 										<Link
 											href="/blog"
 											className="flex items-center justify-between gap-2">
-											<span className="text-primary-foreground">Read My Stories</span>
+											<span className="text-stone-200">Read My Stories</span>
 											<ArrowRight className="h-5 w-5" />
 										</Link>
 									</Button>
 									<Button
 										variant="outline"
 										size="lg"
-										className="text-lg px-8 bg-transparent border-gray-300">
+										className="text-lg px-8 bg-transparent border-stone-200">
 										<Link href="/admin">Join me</Link>
 									</Button>
 								</div>
