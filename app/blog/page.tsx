@@ -21,9 +21,8 @@ import {
 	PaginationEllipsis,
 } from '@/components/ui/pagination';
 
-export default function BlogPage() {
+export default async function BlogPage() {
 	const categories = ['All', 'Development', 'Design', 'Backend', 'Writing'];
-
 	return (
 		<div className="min-h-screen bg-background mx-40">
 			<main className="py-10">
