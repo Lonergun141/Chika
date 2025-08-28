@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid()) @map("USER_ID")
+  email      String   @unique @map("Email")
+  first_name String   @map("Firstname")
+  last_name  String   @map("Lastname")
+  password   String   @map("Password")
+  role       Role     @default(USER) @map("role")
+  posts      Post[]   @relation("UserPosts")
+  comments   Comment[] @relation("UserComments")
+
+  @@map("USER")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Post {
+  id          String   @id @default(cuid()) @map("POST_ID")
+  title       String   @map("Title")
+  slug        String   @unique @map("Slug")
+  content     String   @map("Content")
+  image       String?  @map("Image_url")
+  published   Boolean  @default(false) @map("published")
+  createdAt   DateTime @default(now()) @map("CreatedAt")
+  updatedAt   DateTime @updatedAt @map("UpdatedAt")
+  authorId    String   @map("USER_ID")
+  author      User     @relation(fields: [authorId], references: [id], name: "UserPosts")
+  comments    Comment[] @relation("PostComments")
+  postCategories PostCategory[] @relation("PostCategories")
+  postTags    PostTag[] @relation("PostTags")
+
+  @@map("POST")
+}
+
+model Comment {
+  id       String   @id @default(cuid()) @map("COMMENT_ID")
+  content  String   @map("Content")
+  createdAt DateTime @default(now()) @map("CreatedAt")
+  postId   String   @map("POST_ID")
+  post     Post     @relation(fields: [postId], references: [id], name: "PostComments")
+  authorId String   @map("USER_ID")
+  author   User     @relation(fields: [authorId], references: [id], name: "UserComments")
+
+  @@map("COMMENT")
+}
+
+model PostCategory {
+  postId     String @map("POST_ID")
+  categoryId String @map("CATEGORY_ID")
+  post       Post     @relation(fields: [postId], references: [id], name: "PostCategories")
+  category   Category @relation(fields: [categoryId], references: [id], name: "CategoryPostCategories")
+
+  @@id([postId, categoryId])
+  @@map("POST_CATEGORY")
+}
+
+model Category {
+  id    String  @id @default(cuid()) @map("CATEGORY_ID")
+  name  String  @unique @map("Name")
+  postCategories PostCategory[] @relation("CategoryPostCategories")
+
+  @@map("CATEGORY")
+}
+
+model PostTag {
+  postId String @map("POST_ID")
+  tagId  String @map("TAG_ID")
+  post   Post @relation(fields: [postId], references: [id], name: "PostTags")
+  tag    Tag  @relation(fields: [tagId], references: [id], name: "TagPostTags")
+
+  @@id([postId, tagId])
+  @@map("POST_TAG")
+}
+
+model Tag {
+  id    String  @id @default(cuid()) @map("TAG_ID")
+  name  String  @unique @map("Name")
+  postTags PostTag[] @relation("TagPostTags")
+
+  @@map("TAG")
+}
