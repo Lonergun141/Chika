@@ -21,7 +21,7 @@ export default async function Home() {
                             {/* Left side*/}
                             <div className="text-start">
                                 <h1 className="text-2xl sm:text-3xl lg:text-6xl font-bold text-foreground mb-4">
-                                    WELCOME TO MY<span className="text-blue-500">CHIKAS</span>
+                                    WELCOME TO MY<span className="text-blue-500"> CHIKAS</span>
                                 </h1>
                                 <p className="text-sm sm:text-base text-muted-foreground mb-8">
                                     Welcome to my corner of the internet where I share thoughts on
