@@ -20,49 +20,12 @@ import {
 	PaginationEllipsis,
 } from '@/components/ui/pagination';
 import prisma from '@/lib/prisma';
+import { BlogService } from '@/lib/services/blogServices';
 
 export default async function BlogPage() {
-	// Fetch categories for the filter dropdown
 	const categories = await prisma.category.findMany();
 
-	// Fetch blog posts with all related data
-	const blogPosts = await prisma.post.findMany({
-		include: {
-			author: {
-				select: {
-					first_name: true,
-					last_name: true,
-					email: true,
-				}
-			},
-			postCategories: {
-				include: {
-					category: {
-						select: {
-							name: true,
-						}
-					}
-				}
-			},
-			postTags: {
-				include: {
-					tag: {
-						select: {
-							name: true,
-						}
-					}
-				}
-			},
-			comments: {
-				select: {
-					id: true, // Just to count comments
-				}
-			}
-		},
-		orderBy: {
-			createdAt: 'desc', // Show newest posts first
-		}
-	});
+	const blogPosts = await BlogService.getAllBlogs();
 
 	return (
 		<div className="min-h-screen bg-background mx-40">
@@ -102,13 +65,13 @@ export default async function BlogPage() {
 					{blogPosts.map((post) => {
 						// Extract the first category for the badge
 						const primaryCategory = post.postCategories[0]?.category.name || 'Uncategorized';
-						
+
 						// Extract author full name
 						const authorName = `${post.author.first_name} ${post.author.last_name}`;
-						
+
 						// Extract tags
-						const tags = post.postTags.map(pt => pt.tag.name);
-						
+						const tags = post.postTags.map((pt) => pt.tag.name);
+
 						// Create excerpt from content (first 150 characters)
 						const excerpt = post.content.replace(/[#*`]/g, '').substring(0, 150) + '...';
 
@@ -129,7 +92,8 @@ export default async function BlogPage() {
 										<Badge variant="secondary">{primaryCategory}</Badge>
 										{post.comments.length > 0 && (
 											<span className="text-xs text-muted-foreground">
-												{post.comments.length} comment{post.comments.length !== 1 ? 's' : ''}
+												{post.comments.length} comment
+												{post.comments.length !== 1 ? 's' : ''}
 											</span>
 										)}
 									</div>

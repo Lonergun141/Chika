@@ -13,8 +13,8 @@ export function Header() {
 	const navigation = [
 		{ name: 'Home', href: '/' },
 		{ name: 'Blog', href: '/blog' },
-		{ name: 'Categories', href: '/categories' },
-		{ name: 'Tags', href: '/tags' },
+		//{ name: 'Categories', href: '/categories' },
+		//{ name: 'Tags', href: '/tags' },
 		{ name: 'Admin', href: '/admin' },
 	];
 	return (

@@ -174,3 +174,74 @@ export const comments = [
 		likes: 7,
 	},
 ];
+
+import { FileText, MessageCircle } from 'lucide-react';
+
+// Mock data for admin dashboard
+export const stats = [
+	{ title: 'Total Posts', value: '42', change: '+12%', icon: FileText },
+	{ title: 'Comments', value: '156', change: '+23%', icon: MessageCircle },
+];
+
+export const recentPosts = [
+	{
+		id: 1,
+		title: 'Getting Started with Next.js 14',
+		status: 'Published',
+		author: 'John Doe',
+		date: '2024-01-15',
+		views: 1250,
+		comments: 8,
+	},
+	{
+		id: 2,
+		title: 'The Future of Web Design',
+		status: 'Draft',
+		author: 'Jane Smith',
+		date: '2024-01-12',
+		views: 0,
+		comments: 0,
+	},
+	{
+		id: 3,
+		title: 'Building Scalable APIs',
+		status: 'Published',
+		author: 'Mike Johnson',
+		date: '2024-01-10',
+		views: 890,
+		comments: 5,
+	},
+	{
+		id: 4,
+		title: 'CSS Grid vs Flexbox Guide',
+		status: 'Published',
+		author: 'Sarah Wilson',
+		date: '2024-01-08',
+		views: 2100,
+		comments: 12,
+	},
+	{
+		id: 5,
+		title: 'Database Optimization Tips',
+		status: 'Draft',
+		author: 'Lisa Chen',
+		date: '2024-01-05',
+		views: 0,
+		comments: 0,
+	},
+];
+
+export const categories = [
+	{ id: 1, name: 'Development', postCount: 24, slug: 'development' },
+	{ id: 2, name: 'Design', postCount: 18, slug: 'design' },
+	{ id: 3, name: 'Backend', postCount: 15, slug: 'backend' },
+	{ id: 4, name: 'Writing', postCount: 12, slug: 'writing' },
+];
+
+export const tags = [
+	{ id: 1, name: 'React', postCount: 18 },
+	{ id: 2, name: 'Next.js', postCount: 15 },
+	{ id: 3, name: 'JavaScript', postCount: 22 },
+	{ id: 4, name: 'TypeScript', postCount: 12 },
+	{ id: 5, name: 'CSS', postCount: 14 },
+];
