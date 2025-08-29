@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
+  runtime  = "vercel-edge"
 }
 
 datasource db {
@@ -15,16 +16,61 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(cuid()) @map("USER_ID")
-  email      String   @unique @map("Email")
-  first_name String   @map("Firstname")
-  last_name  String   @map("Lastname")
-  password   String   @map("Password")
-  role       Role     @default(USER) @map("role")
-  posts      Post[]   @relation("UserPosts")
-  comments   Comment[] @relation("UserComments")
+  id            String    @id @default(cuid()) @map("USER_ID")
+  name          String?   @map("Name")
+  email         String    @unique @map("Email")
+  emailVerified DateTime? @map("EmailVerified")
+  image         String?   @map("Image")
+  first_name    String?   @map("Firstname")
+  last_name     String?   @map("Lastname")
+  password      String?   @map("Password") 
+  role          Role      @default(USER) @map("role")
+
+  accounts Account[]
+  sessions Session[]
+  
+  posts     Post[]    @relation("UserPosts")
+  comments  Comment[] @relation("UserComments")
+  
 
   @@map("USER")
+}
+
+model Account {
+  userId            String  @map("USER_ID")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@map("ACCOUNT")
+}
+
+model Session {
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("USER_ID")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("SESSION")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("VERIFICATION_TOKEN")
 }
 
 enum Role {
@@ -33,38 +79,38 @@ enum Role {
 }
 
 model Post {
-  id          String   @id @default(cuid()) @map("POST_ID")
-  title       String   @map("Title")
-  slug        String   @unique @map("Slug")
-  content     String   @map("Content")
-  image       String?  @map("Image_url")
-  published   Boolean  @default(false) @map("published")
-  createdAt   DateTime @default(now()) @map("CreatedAt")
-  updatedAt   DateTime @updatedAt @map("UpdatedAt")
-  authorId    String   @map("USER_ID")
-  author      User     @relation(fields: [authorId], references: [id], name: "UserPosts")
-  comments    Comment[] @relation("PostComments")
+  id             String         @id @default(cuid()) @map("POST_ID")
+  title          String         @map("Title")
+  slug           String         @unique @map("Slug")
+  content        String         @map("Content")
+  image          String?        @map("Image_url")
+  published      Boolean        @default(false) @map("published")
+  createdAt      DateTime       @default(now()) @map("CreatedAt")
+  updatedAt      DateTime       @updatedAt @map("UpdatedAt")
+  authorId       String         @map("USER_ID")
+  author         User           @relation(fields: [authorId], references: [id], name: "UserPosts")
+  comments       Comment[]      @relation("PostComments")
   postCategories PostCategory[] @relation("PostCategories")
-  postTags    PostTag[] @relation("PostTags")
+  postTags       PostTag[]      @relation("PostTags")
 
   @@map("POST")
 }
 
 model Comment {
-  id       String   @id @default(cuid()) @map("COMMENT_ID")
-  content  String   @map("Content")
+  id        String   @id @default(cuid()) @map("COMMENT_ID")
+  content   String   @map("Content")
   createdAt DateTime @default(now()) @map("CreatedAt")
-  postId   String   @map("POST_ID")
-  post     Post     @relation(fields: [postId], references: [id], name: "PostComments")
-  authorId String   @map("USER_ID")
-  author   User     @relation(fields: [authorId], references: [id], name: "UserComments")
+  postId    String   @map("POST_ID")
+  post      Post     @relation(fields: [postId], references: [id], name: "PostComments")
+  authorId  String   @map("USER_ID")
+  author    User     @relation(fields: [authorId], references: [id], name: "UserComments")
 
   @@map("COMMENT")
 }
 
 model PostCategory {
-  postId     String @map("POST_ID")
-  categoryId String @map("CATEGORY_ID")
+  postId     String   @map("POST_ID")
+  categoryId String   @map("CATEGORY_ID")
   post       Post     @relation(fields: [postId], references: [id], name: "PostCategories")
   category   Category @relation(fields: [categoryId], references: [id], name: "CategoryPostCategories")
 
@@ -73,8 +119,8 @@ model PostCategory {
 }
 
 model Category {
-  id    String  @id @default(cuid()) @map("CATEGORY_ID")
-  name  String  @unique @map("Name")
+  id             String         @id @default(cuid()) @map("CATEGORY_ID")
+  name           String         @unique @map("Name")
   postCategories PostCategory[] @relation("CategoryPostCategories")
 
   @@map("CATEGORY")
@@ -83,16 +129,16 @@ model Category {
 model PostTag {
   postId String @map("POST_ID")
   tagId  String @map("TAG_ID")
-  post   Post @relation(fields: [postId], references: [id], name: "PostTags")
-  tag    Tag  @relation(fields: [tagId], references: [id], name: "TagPostTags")
+  post   Post   @relation(fields: [postId], references: [id], name: "PostTags")
+  tag    Tag    @relation(fields: [tagId], references: [id], name: "TagPostTags")
 
   @@id([postId, tagId])
   @@map("POST_TAG")
 }
 
 model Tag {
-  id    String  @id @default(cuid()) @map("TAG_ID")
-  name  String  @unique @map("Name")
+  id       String    @id @default(cuid()) @map("TAG_ID")
+  name     String    @unique @map("Name")
   postTags PostTag[] @relation("TagPostTags")
 
   @@map("TAG")

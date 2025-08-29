@@ -1,30 +1,40 @@
-import type React from "react"
-import type { Metadata } from "next"
-import "./globals.css"
-import { Header } from "@/components/header"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Footer } from "@/components/footer"
+import { Inter } from 'next/font/google';
+import { ThemeProvider } from 'next-themes';
+import { Providers } from 'providers/session-provider';
+import { Header } from '@/components/header';
+import { Toaster } from 'sonner';
+import './globals.css';
 
-export const metadata: Metadata = {
-  title: "Chika - Modern Blogging Platform",
-  description: "A clean, modern blogging platform built with Next.js",
-  generator: "v0.app",
-}
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata = {
+  title: 'Chika Blog',
+  description: 'A modern blog built with Next.js',
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-background font-sans antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <Header />
-          {children}
-          <Footer />
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers>
+            <div className="min-h-screen bg-background">
+              <Header />
+              <main>{children}</main>
+            </div>
+            <Toaster position="top-center" />
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

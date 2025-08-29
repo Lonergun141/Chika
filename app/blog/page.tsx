@@ -1,3 +1,5 @@
+'use client'
+
 import { Search, Filter, User, Calendar } from 'lucide-react';
 import {
 	Select,
@@ -19,13 +21,37 @@ import {
 	PaginationNext,
 	PaginationEllipsis,
 } from '@/components/ui/pagination';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { BlogService } from '@/lib/services/blogServices';
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default async function BlogPage() {
 	const categories = await prisma.category.findMany();
 
 	const blogPosts = await BlogService.getAllBlogs();
+
+	const { data: session, status } = useSession();
+	const router = useRouter();
+
+	useEffect(() => {
+		if (status === 'unauthenticated') {
+			router.push('/auth/login');
+		}
+	}, [status, router]);
+
+	if (status === 'loading') {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				<p>loading</p>
+			</div>
+		);
+	}
+
+	if (!session) {
+		return null; // Will redirect due to useEffect
+	}
 
 	return (
 		<div className="min-h-screen bg-background mx-40">

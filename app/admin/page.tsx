@@ -19,7 +19,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { stats } from '@/constants/mockData.';
+import { stats } from 'constants/mockData.';
 import { CatService } from '@/lib/services/catServices';
 import { BlogService } from '@/lib/services/blogServices';
 import { TagService } from '@/lib/services/tagServices';
