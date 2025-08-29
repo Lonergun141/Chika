@@ -13,7 +13,6 @@ interface BlogPostPageProps {
 	}>;
 }
 
-
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
 	const { slug } = await params;
 
@@ -25,25 +24,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 					first_name: true,
 					last_name: true,
 					email: true,
-				}
+				},
 			},
 			postCategories: {
 				include: {
 					category: {
 						select: {
 							name: true,
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			postTags: {
 				include: {
 					tag: {
 						select: {
 							name: true,
-						}
-					}
-				}
+						},
+					},
+				},
 			},
 			comments: {
 				include: {
@@ -51,14 +50,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 						select: {
 							first_name: true,
 							last_name: true,
-						}
-					}
+						},
+					},
 				},
 				orderBy: {
 					createdAt: 'desc',
-				}
-			}
-		}
+				},
+			},
+		},
 	});
 
 	// If post not found, show 404
@@ -66,9 +65,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 		notFound();
 	}
 
-	const authorName = `${post.author.first_name} ${post.author.last_name}`;
+	const authorName =
+		`${post.author.first_name || ''} ${post.author.last_name || ''}`.trim() || 'Unknown Author';
 	const primaryCategory = post.postCategories[0]?.category.name || 'Uncategorized';
-	const tags = post.postTags.map(pt => pt.tag.name);
+	const tags = post.postTags.map((pt) => pt.tag.name);
 	const comments = post.comments;
 
 	const formatContent = (content: string) => {
@@ -99,9 +99,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 						<div className="mb-8">
 							<div className="flex items-center gap-2 mb-4">
 								<Badge variant="secondary">{primaryCategory}</Badge>
-								{!post.published && (
-									<Badge variant="destructive">Draft</Badge>
-								)}
+								{!post.published && <Badge variant="destructive">Draft</Badge>}
 							</div>
 
 							<h1 className="text-4xl font-bold text-foreground mb-6 leading-tight">
@@ -112,7 +110,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 								<div className="flex items-center gap-4">
 									<Avatar>
 										<AvatarFallback>
-											{post.author.first_name[0]}{post.author.last_name[0]}
+											{(post.author.first_name?.[0] || '') +
+												(post.author.last_name?.[0] || '') || 'U'}
 										</AvatarFallback>
 									</Avatar>
 									<div>
@@ -169,15 +168,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 						<CardContent className="pt-6">
 							<div className="flex items-start gap-4">
 								<Avatar className="h-16 w-16">
-									<AvatarFallback className="text-lg">
-										{post.author.first_name[0]}{post.author.last_name[0]}
+									<AvatarFallback>
+										{(post.author.first_name?.[0] || '') +
+											(post.author.last_name?.[0] || '') || 'U'}
 									</AvatarFallback>
 								</Avatar>
 								<div className="flex-1">
 									<h3 className="text-lg font-semibold mb-2">About {authorName}</h3>
 									<p className="text-muted-foreground">
-										Content creator and developer passionate about sharing knowledge 
-										through writing. Connect with {post.author.first_name} at {post.author.email}.
+										Content creator and developer passionate about sharing knowledge
+										through writing. Connect with {post.author.first_name || 'the author'}{' '}
+										at {post.author.email || 'their email'}.
 									</p>
 								</div>
 							</div>
@@ -197,7 +198,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 											<div className="flex items-start gap-4">
 												<Avatar>
 													<AvatarFallback>
-														{comment.author.first_name[0]}{comment.author.last_name[0]}
+														{(post.author.first_name?.[0] || '') +
+															(post.author.last_name?.[0] || '') || 'U'}
 													</AvatarFallback>
 												</Avatar>
 												<div className="flex-1">
