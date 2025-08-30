@@ -9,8 +9,10 @@ import Link from 'next/link';
 import { Github, Mail, Lock } from 'lucide-react';
 import { useFormState, useFormStatus } from 'react-dom';
 import { authenticate, signInWithProvider } from '@/lib/actions/auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -27,15 +29,27 @@ function SocialButton({ provider, icon: Icon, children }: {
   icon: React.ComponentType<{ className?: string }>; 
   children: React.ReactNode;
 }) {
-  const { pending } = useFormStatus();
+  const [loading, setLoading] = useState(false);
+  
+  const handleSocialLogin = async () => {
+    try {
+      setLoading(true);
+      await signIn(provider, { callbackUrl: '/' });
+    } catch (error) {
+      console.error('Social login error:', error);
+      toast.error('Failed to sign in. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   return (
     <Button 
       variant="outline" 
       className="w-full bg-transparent" 
       type="button"
-      disabled={pending}
-      onClick={() => signInWithProvider(provider)}
+      disabled={loading}
+      onClick={handleSocialLogin}
     >
       <Icon className="h-4 w-4 mr-2" />
       {children}
@@ -45,6 +59,38 @@ function SocialButton({ provider, icon: Icon, children }: {
 
 export default function LoginPage() {
   const [state, dispatch] = useFormState(authenticate, undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+
+  // Handle form submission with proper session management
+  const handleFormSubmit = async (formData: FormData) => {
+    try {
+      setIsSubmitting(true);
+      
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+
+      // Use NextAuth signIn instead of server action for better session handling
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast.error('Invalid credentials. Please check your email and password.');
+      } else if (result?.ok) {
+        toast.success('Welcome back!');
+        router.push('/');
+        router.refresh(); // Ensure the page refreshes to show updated state
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     if (state?.message) {
@@ -69,16 +115,12 @@ export default function LoginPage() {
             <CardContent className="space-y-6">
               {/* Social Login */}
               <div className="space-y-3">
-                <form action={() => signInWithProvider('github')}>
-                  <SocialButton provider="github" icon={Github}>
-                    Continue with GitHub
-                  </SocialButton>
-                </form>
-                <form action={() => signInWithProvider('google')}>
-                  <SocialButton provider="google" icon={Mail}>
-                    Continue with Google
-                  </SocialButton>
-                </form>
+                <SocialButton provider="github" icon={Github}>
+                  Continue with GitHub
+                </SocialButton>
+                <SocialButton provider="google" icon={Mail}>
+                  Continue with Google
+                </SocialButton>
               </div>
 
               <div className="relative">
@@ -93,7 +135,7 @@ export default function LoginPage() {
               </div>
 
               {/* Email Login Form */}
-              <form action={dispatch} className="space-y-4">
+              <form action={handleFormSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
@@ -151,7 +193,13 @@ export default function LoginPage() {
                   </Link>
                 </div>
 
-                <SubmitButton />
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Signing in...' : 'Sign In'}
+                </Button>
               </form>
 
               <div className="text-center text-sm">
